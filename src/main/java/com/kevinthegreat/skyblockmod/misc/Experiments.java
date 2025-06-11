@@ -38,16 +38,16 @@ public class Experiments {
     public int ultrasequencerNextSlot;
 
     public static final ImmutableMap<Item, Item> terracottaToGlass = ImmutableMap.ofEntries(
-            new AbstractMap.SimpleImmutableEntry<>(Items.RED_TERRACOTTA, Items.RED_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.ORANGE_TERRACOTTA, Items.ORANGE_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.YELLOW_TERRACOTTA, Items.YELLOW_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.LIME_TERRACOTTA, Items.LIME_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.GREEN_TERRACOTTA, Items.GREEN_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.CYAN_TERRACOTTA, Items.CYAN_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.LIGHT_BLUE_TERRACOTTA, Items.LIGHT_BLUE_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.BLUE_TERRACOTTA, Items.BLUE_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.PURPLE_TERRACOTTA, Items.PURPLE_STAINED_GLASS),
-            new AbstractMap.SimpleImmutableEntry<>(Items.PINK_TERRACOTTA, Items.PINK_STAINED_GLASS)
+        new AbstractMap.SimpleImmutableEntry<>(Items.RED_TERRACOTTA, Items.RED_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.ORANGE_TERRACOTTA, Items.ORANGE_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.YELLOW_TERRACOTTA, Items.YELLOW_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.LIME_TERRACOTTA, Items.LIME_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.GREEN_TERRACOTTA, Items.GREEN_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.CYAN_TERRACOTTA, Items.CYAN_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.LIGHT_BLUE_TERRACOTTA, Items.LIGHT_BLUE_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.BLUE_TERRACOTTA, Items.BLUE_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.PURPLE_TERRACOTTA, Items.PURPLE_STAINED_GLASS),
+        new AbstractMap.SimpleImmutableEntry<>(Items.PINK_TERRACOTTA, Items.PINK_STAINED_GLASS)
     );
 
     public void start(MinecraftClient minecraftClient, Screen screen, int scaledWidth, int scaledHeight) {
@@ -110,13 +110,16 @@ public class Experiments {
     }
 
     private void chronomatron(Screen screen) {
-        if (SkyblockMod.skyblockMod.options.experimentChronomatron.getValue() && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().startsWith("Chronomatron (")) {
+        if (SkyblockMod.skyblockMod.options.experimentChronomatron.getValue()
+                && screen instanceof GenericContainerScreen genericContainerScreen
+                && genericContainerScreen.getTitle().getString().startsWith("Chronomatron (")) {
+
+            Inventory inventory = genericContainerScreen.getScreenHandler().getInventory();
             switch (state) {
                 case REMEMBER -> {
-                    Inventory inventory = genericContainerScreen.getScreenHandler().getInventory();
                     if (chronomatronCurrentSlot == 0) {
                         for (int index = 10; index < 43; index++) {
-                            if (inventory.getStack(index).hasEnchantments()) {
+                            if (inventory.getStack(index).hasGlint()) {
                                 if (chronomatronSlots.size() <= chronomatronChainLengthCount) {
                                     chronomatronSlots.add(terracottaToGlass.get(inventory.getStack(index).getItem()));
                                     state = State.WAIT;
@@ -127,17 +130,17 @@ public class Experiments {
                                 return;
                             }
                         }
-                    } else if (!inventory.getStack(chronomatronCurrentSlot).hasEnchantments()) {
+                    } else if (!inventory.getStack(chronomatronCurrentSlot).hasGlint()) {
                         chronomatronCurrentSlot = 0;
                     }
                 }
                 case WAIT -> {
-                    if (genericContainerScreen.getScreenHandler().getInventory().getStack(49).getName().getString().startsWith("Timer: ")) {
+                    if (inventory.getStack(49).getName().getString().startsWith("Timer: ")) {
                         state = State.SHOW;
                     }
                 }
                 case END -> {
-                    String name = genericContainerScreen.getScreenHandler().getInventory().getStack(49).getName().getString();
+                    String name = inventory.getStack(49).getName().getString();
                     if (!name.startsWith("Timer: ")) {
                         if (name.equals("Remember the pattern!")) {
                             chronomatronChainLengthCount = 0;
@@ -155,7 +158,9 @@ public class Experiments {
     }
 
     private void superpairs(Screen screen) {
-        if (SkyblockMod.skyblockMod.options.experimentSuperpairs.getValue() && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().startsWith("Superpairs (")) {
+        if (SkyblockMod.skyblockMod.options.experimentSuperpairs.getValue()
+                && screen instanceof GenericContainerScreen genericContainerScreen
+                && genericContainerScreen.getTitle().getString().startsWith("Superpairs (")) {
             if (state == State.SHOW) {
                 if (genericContainerScreen.getScreenHandler().getInventory().getStack(4).isOf(Items.CAULDRON)) {
                     resetSuperpairs(screen);
@@ -174,7 +179,9 @@ public class Experiments {
     }
 
     private void ultrasequencer(Screen screen) {
-        if (SkyblockMod.skyblockMod.options.experimentUltrasequencer.getValue() && screen instanceof GenericContainerScreen genericContainerScreen && genericContainerScreen.getTitle().getString().startsWith("Ultrasequencer (")) {
+        if (SkyblockMod.skyblockMod.options.experimentUltrasequencer.getValue()
+                && screen instanceof GenericContainerScreen genericContainerScreen
+                && genericContainerScreen.getTitle().getString().startsWith("Ultrasequencer (")) {
             switch (state) {
                 case REMEMBER -> {
                     Inventory inventory = genericContainerScreen.getScreenHandler().getInventory();
